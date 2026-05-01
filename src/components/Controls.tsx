@@ -1,5 +1,6 @@
 import React from 'react';
 import { TableConfig, TableTheme } from '../types';
+import { cn } from '../lib/utils';
 
 interface ControlsProps {
   config: TableConfig;
@@ -62,8 +63,38 @@ export default function Controls({ config, setConfig }: ControlsProps) {
     }
   };
 
+  const LANGUAGES = [
+    'typescript', 'javascript', 'python', 'rust', 'go', 'cpp', 'css', 'html', 'sql', 'markdown'
+  ];
+
   return (
     <section className="flex flex-col gap-8 pb-12">
+      <div>
+        <label className="text-[10px] uppercase tracking-[0.2em] text-white/40 font-semibold mb-4 block">
+          Render Mode
+        </label>
+        <div className="flex p-1 bg-dark-card border border-dark-border rounded-lg">
+          <button
+            onClick={() => updateConfig({ mode: 'table' })}
+            className={cn(
+              "flex-1 py-2 text-[11px] font-bold rounded transition-all",
+              config.mode === 'table' ? "bg-accent text-black shadow-lg" : "text-white/40 hover:text-white"
+            )}
+          >
+            Markdown Table
+          </button>
+          <button
+            onClick={() => updateConfig({ mode: 'code' })}
+            className={cn(
+              "flex-1 py-2 text-[11px] font-bold rounded transition-all",
+              config.mode === 'code' ? "bg-accent text-black shadow-lg" : "text-white/40 hover:text-white"
+            )}
+          >
+            Code Snippet
+          </button>
+        </div>
+      </div>
+
       <div>
         <label className="text-[10px] uppercase tracking-[0.2em] text-white/40 font-semibold mb-4 block">
           Document Labels
@@ -149,6 +180,22 @@ export default function Controls({ config, setConfig }: ControlsProps) {
         </label>
 
         <div className="space-y-5">
+          {/* Language Selection */}
+          {config.mode === 'code' && (
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-white/60">Language</span>
+              <select 
+                value={config.language}
+                onChange={(e) => updateConfig({ language: e.target.value })}
+                className="bg-dark-card border border-dark-border text-white text-[11px] rounded px-2 py-1 w-32 outline-none focus:border-accent/40 capitalize"
+              >
+                {LANGUAGES.map(lang => (
+                  <option key={lang} value={lang}>{lang}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
           {/* Theme Select */}
           <div className="flex items-center justify-between">
             <span className="text-xs text-white/60">Theme</span>

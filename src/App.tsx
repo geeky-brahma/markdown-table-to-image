@@ -70,7 +70,7 @@ export default function App() {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Table");
     XLSX.writeFile(wb, `tablify-${Date.now()}.xlsx`);
-  }, [markdown]);
+  }, [markdown, config.mode]);
 
   return (
     <div className="flex flex-col h-screen bg-dark-bg font-sans overflow-hidden text-[#e5e5e5]">
@@ -120,14 +120,19 @@ export default function App() {
           <div className="p-6 border-t border-dark-border bg-dark-header">
             <button 
               onClick={handleExportExcel}
-              className="w-full py-2.5 rounded bg-dark-card border border-dark-border text-xs text-white/60 hover:text-white flex items-center justify-center gap-2 transition-colors hover:bg-white/5 active:scale-95"
+              disabled={config.mode === 'code'}
+              className={`w-full py-2.5 rounded bg-dark-card border border-dark-border text-xs flex items-center justify-center gap-2 transition-all active:scale-95 ${
+                config.mode === 'code' 
+                  ? 'opacity-20 cursor-not-allowed grayscale' 
+                  : 'text-white/60 hover:text-white hover:bg-white/5'
+              }`}
             >
               Export Excel (.xlsx)
             </button>
           </div>
         </aside>
         
-        <div className="flex-1 overflow-auto table-preview-container flex items-center justify-center p-8 md:p-12 relative min-w-0" style={{ background: 'radial-gradient(circle at top left, #2d1b4e, #0a0a0a)' }}>
+        <div className="flex-1 overflow-auto table-preview-container flex items-center justify-center p-8 md:p-12 relative min-w-0" style={{ background: config.gradientBackground }}>
           <div className="w-full max-w-4xl relative">
              <AnimatePresence mode="wait">
               <motion.div

@@ -22,6 +22,8 @@ export interface TableConfig {
   showSubtitle: boolean;
   footer: string;
   showFooter: boolean;
+  mode: 'table' | 'code';
+  language: string;
 }
 
 export const DEFAULTS: TableConfig = {
@@ -46,4 +48,6 @@ export const DEFAULTS: TableConfig = {
   showSubtitle: true,
   footer: "Verified by Tablify",
   showFooter: true,
+  mode: 'table',
+  language: 'typescript',
 };

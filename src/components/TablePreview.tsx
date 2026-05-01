@@ -1,6 +1,8 @@
 import React, { forwardRef } from 'react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { lucario as codeTheme } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { TableConfig } from '../types';
 import { cn } from '../lib/utils';
 
@@ -63,66 +65,159 @@ const TablePreview = forwardRef<HTMLDivElement, TablePreviewProps>(({ markdown, 
             </div>
           )}
 
-          <div className={cn(
-            "markdown-body",
-            config.theme === 'premium-pearl' ? "text-slate-800" : "text-white"
-          )}>
-            <Markdown 
-              remarkPlugins={[remarkGfm]}
-              components={{
-                table: ({ children }) => (
-                  <table className="w-full border-collapse">
-                    {children}
-                  </table>
-                ),
-                thead: ({ children }) => (
-                  <thead className={cn(
-                    "border-b",
-                    config.theme === 'premium-pearl' ? "border-slate-200" : "border-dark-border"
-                  )}>
-                    {children}
-                  </thead>
-                ),
-                th: ({ children }) => (
-                  <th 
-                    className={cn(
-                      "serif italic font-normal py-5 px-4 text-left text-lg transition-colors",
-                      config.theme === 'premium-pearl' ? "text-slate-900" : "text-white/90"
-                    )}
-                    style={{ 
-                      borderRight: config.showBorders ? (config.theme === 'premium-pearl' ? '1px solid rgba(0,0,0,0.05)' : '1px solid rgba(255,255,255,0.05)') : 'none',
-                    }}
-                  >
-                    {children}
-                  </th>
-                ),
-                td: ({ children }) => (
-                  <td 
-                    className={cn(
-                      "py-5 px-4 text-sm font-sans border-b transition-colors",
-                      config.theme === 'premium-pearl' ? "text-slate-600 border-slate-100" : "text-white/60 border-white/[0.03]"
-                    )}
-                    style={{ 
-                      borderRight: config.showBorders ? (config.theme === 'premium-pearl' ? '1px solid rgba(0,0,0,0.05)' : '1px solid rgba(255,255,255,0.05)') : 'none',
-                      fontFamily: config.font === 'Inter' ? 'var(--font-sans)' : config.font,
-                    }}
-                  >
-                    {children}
-                  </td>
-                ),
-                tr: ({ children, ...props }) => (
-                   <tr className={cn(
-                    "transition-colors",
-                    config.theme === 'premium-pearl' ? "hover:bg-slate-50" : "hover:bg-white/[0.02]"
-                  )}>
-                    {children}
-                  </tr>
-                )
-              }}
-            >
-              {markdown}
-            </Markdown>
-          </div>
+          {config.mode === 'code' ? (
+            <div className="animate-in fade-in zoom-in-95 duration-500">
+               <div className="bg-black/80 rounded-xl overflow-hidden border border-white/10 shadow-2xl">
+                 <div className="bg-white/5 border-b border-white/5 px-5 py-3 flex items-center justify-between">
+                    <div className="flex gap-2">
+                       <div className="w-3 h-3 rounded-full bg-[#ff5f56] shadow-[0_0_10px_rgba(255,95,86,0.3)]" />
+                       <div className="w-3 h-3 rounded-full bg-[#ffbd2e] shadow-[0_0_10px_rgba(255,189,46,0.3)]" />
+                       <div className="w-3 h-3 rounded-full bg-[#27c93f] shadow-[0_0_10px_rgba(39,201,63,0.3)]" />
+                    </div>
+                    <div className="text-[10px] text-white/20 uppercase tracking-[0.2em] font-mono">
+                      {config.language} &bull; tablify.snippet
+                    </div>
+                 </div>
+                 <div className="p-1">
+                    <SyntaxHighlighter
+                      language={config.language}
+                      style={codeTheme}
+                      customStyle={{
+                        background: 'transparent',
+                        padding: '2rem',
+                        margin: 0,
+                        fontSize: '14px',
+                        lineHeight: '1.6',
+                        fontFamily: 'JetBrains Mono, monospace',
+                      }}
+                      codeTagProps={{
+                        style: {
+                          fontFamily: 'inherit',
+                        }
+                      }}
+                    >
+                      {markdown}
+                    </SyntaxHighlighter>
+                 </div>
+               </div>
+            </div>
+          ) : (
+            <div className={cn(
+              "markdown-body",
+              config.theme === 'premium-pearl' ? "text-slate-800" : "text-white"
+            )}>
+              <Markdown 
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  h1: ({ children }) => (
+                    <h1 className="text-4xl font-bold mb-8 border-b border-white/10 pb-4 serif italic drop-shadow-xl text-accent tracking-tighter">
+                      {children}
+                    </h1>
+                  ),
+                  h2: ({ children }) => (
+                    <h2 className="text-2xl font-semibold mt-10 mb-4 serif italic opacity-90 border-l-2 border-accent/20 pl-4">
+                      {children}
+                    </h2>
+                  ),
+                  h3: ({ children }) => (
+                    <h3 className="text-xl font-medium mt-8 mb-3 opacity-80 uppercase tracking-widest text-[0.8em]">
+                      {children}
+                    </h3>
+                  ),
+                  p: ({ children }) => (
+                    <p className="mb-6 leading-loose text-base opacity-60 font-sans tracking-tight">
+                      {children}
+                    </p>
+                  ),
+                  code: ({ children }) => (
+                    <code className="bg-white/10 rounded px-1.5 py-0.5 text-accent font-mono text-[0.9em] border border-white/5">
+                      {children}
+                    </code>
+                  ),
+                  pre: ({ children }) => (
+                    <pre className="bg-black/60 border border-white/5 rounded-2xl p-8 my-8 font-mono text-[13px] leading-relaxed overflow-x-auto shadow-2xl relative group">
+                      <div className="absolute top-3 right-4 flex gap-1.5 opacity-20">
+                        <div className="w-2 h-2 rounded-full bg-white/40" />
+                        <div className="w-2 h-2 rounded-full bg-white/40" />
+                        <div className="w-2 h-2 rounded-full bg-white/40" />
+                      </div>
+                      {children}
+                    </pre>
+                  ),
+                  hr: () => (
+                    <hr className="my-8 border-t border-white/10" />
+                  ),
+                  ul: ({ children }) => (
+                    <ul className="list-disc list-inside mb-6 space-y-2 opacity-70">
+                      {children}
+                    </ul>
+                  ),
+                  ol: ({ children }) => (
+                    <ol className="list-decimal list-inside mb-6 space-y-2 opacity-70">
+                      {children}
+                    </ol>
+                  ),
+                  blockquote: ({ children }) => (
+                    <blockquote className="border-l-4 border-accent/40 pl-6 my-6 italic opacity-80 text-lg">
+                      {children}
+                    </blockquote>
+                  ),
+                  table: ({ children }) => (
+                    <div className="overflow-x-auto my-8">
+                      <table className="w-full border-collapse">
+                        {children}
+                      </table>
+                    </div>
+                  ),
+                  thead: ({ children }) => (
+                    <thead className={cn(
+                      "border-b",
+                      config.theme === 'premium-pearl' ? "border-slate-200" : "border-dark-border"
+                    )}>
+                      {children}
+                    </thead>
+                  ),
+                  th: ({ children }) => (
+                    <th 
+                      className={cn(
+                        "serif italic font-normal py-5 px-4 text-left text-lg transition-colors",
+                        config.theme === 'premium-pearl' ? "text-slate-900" : "text-white/90"
+                      )}
+                      style={{ 
+                        borderRight: (config.showBorders && config.mode === 'table') ? (config.theme === 'premium-pearl' ? '1px solid rgba(0,0,0,0.05)' : '1px solid rgba(255,255,255,0.05)') : 'none',
+                      }}
+                    >
+                      {children}
+                    </th>
+                  ),
+                  td: ({ children }) => (
+                    <td 
+                      className={cn(
+                        "py-5 px-4 text-sm font-sans border-b transition-colors",
+                        config.theme === 'premium-pearl' ? "text-slate-600 border-slate-100" : "text-white/60 border-white/[0.03]"
+                      )}
+                      style={{ 
+                        borderRight: (config.showBorders && config.mode === 'table') ? (config.theme === 'premium-pearl' ? '1px solid rgba(0,0,0,0.05)' : '1px solid rgba(255,255,255,0.05)') : 'none',
+                        fontFamily: config.font === 'Inter' ? 'var(--font-sans)' : config.font,
+                      }}
+                    >
+                      {children}
+                    </td>
+                  ),
+                  tr: ({ children, ...props }) => (
+                    <tr className={cn(
+                      "transition-colors",
+                      config.theme === 'premium-pearl' ? "hover:bg-slate-50" : "hover:bg-white/[0.02]"
+                    )}>
+                      {children}
+                    </tr>
+                  )
+                }}
+              >
+                {markdown}
+              </Markdown>
+            </div>
+          )}
 
           {/* Decorative Footer */}
           {config.showFooter && (
